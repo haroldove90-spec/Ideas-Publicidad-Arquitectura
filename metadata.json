@@ -1,5 +1,5 @@
 {
-  "name": "Ideas - Gestión Móvil",
+  "name": "Ideas Publicidad Arquitectura",
   "description": "Aplicación móvil de administración para Ideas - Publicidad y Arquitectura con catálogo, cotizaciones, facturación, calendario y roles de seguridad.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

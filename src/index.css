@@ -7,6 +7,33 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
+/* Tablet & Desktop text size overrides to scale naturally to standard web page sizes */
+@media (min-width: 768px) {
+  .text-\[8px\] { font-size: 11px !important; }
+  .text-\[9px\] { font-size: 12px !important; }
+  .text-\[10px\] { font-size: 13px !important; }
+  .text-\[11px\] { font-size: 14px !important; }
+  .text-xs { font-size: 15px !important; }
+  .text-sm { font-size: 17px !important; }
+  .text-base { font-size: 19px !important; }
+  .text-lg { font-size: 22px !important; }
+  .text-xl { font-size: 26px !important; }
+  .text-2xl { font-size: 30px !important; }
+}
+
+@media (min-width: 1024px) {
+  .text-\[8px\] { font-size: 12px !important; }
+  .text-\[9px\] { font-size: 13px !important; }
+  .text-\[10px\] { font-size: 14px !important; }
+  .text-\[11px\] { font-size: 15px !important; }
+  .text-xs { font-size: 16px !important; }
+  .text-sm { font-size: 18px !important; }
+  .text-base { font-size: 20px !important; }
+  .text-lg { font-size: 24px !important; }
+  .text-xl { font-size: 28px !important; }
+  .text-2xl { font-size: 34px !important; }
+}
+
 @layer utilities {
   /* Hide scrollbar for Chrome, Safari and Opera */
   .scrollbar-hide::-webkit-scrollbar {
