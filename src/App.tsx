@@ -26,12 +26,17 @@ import AdminReports from './components/AdminReports';
 import AdminFinance from './components/AdminFinance';
 import AdminUsers from './components/AdminUsers';
 import AdminBilling from './components/AdminBilling';
+import VentasWorkspace from './components/VentasWorkspace';
+import DisenoWorkspace from './components/DisenoWorkspace';
+import ProduccionWorkspace from './components/ProduccionWorkspace';
+import AlmacenWorkspace from './components/AlmacenWorkspace';
 
 // Icon imports
 import { 
   LayoutDashboard, BookOpen, FileSpreadsheet, 
   Receipt, CalendarRange, ShoppingBag, Landmark, Users, 
-  BarChart3, Settings, LogOut, ShieldCheck, Heart, Sparkles, Paintbrush, Hammer, Warehouse, ShieldAlert, BadgeAlert, AlertCircle, ChevronRight
+  BarChart3, Settings, LogOut, ShieldCheck, Heart, Sparkles, Paintbrush, Hammer, Warehouse, ShieldAlert, BadgeAlert, AlertCircle, ChevronRight, TrendingUp,
+  Layers, Calendar, Wrench, Package, Database, ShoppingCart
 } from 'lucide-react';
 
 interface Employee {
@@ -53,11 +58,17 @@ interface Employee {
 
 export default function App() {
   // 1. Role Selection Route state
-  // Starts on 'home' to present the clean 4 roles interface requested by the user.
-  const [activeRole, setActiveRole] = useState<'home' | 'Admin' | 'Diseño' | 'Produccion' | 'Almacen'>('home');
+  // Starts on 'home' to present the clean roles interface requested by the user.
+  const [activeRole, setActiveRole] = useState<'home' | 'Admin' | 'Diseño' | 'Produccion' | 'Almacen' | 'Ventas'>('home');
   
   // 2. Navigation State for Admin Workspace
   const [activeTab, setActiveTab] = useState<string>('dashboard');
+
+  // Navigation State for Production Workspace
+  const [productionTab, setProductionTab] = useState<'flujo' | 'agenda' | 'taller'>('flujo');
+
+  // Navigation State for Almacen Workspace
+  const [almacenTab, setAlmacenTab] = useState<'inventario' | 'compras' | 'agenda' | 'respaldo'>('inventario');
 
   // 3. Core States synced with localStorage
   const [services, setServices] = useState<ServiceItem[]>(() => {
@@ -445,7 +456,7 @@ export default function App() {
           </div>
 
           {/* Core Roles Grid layout requested by the user */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto animate-in slide-in-from-bottom-6 duration-700 delay-100">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 max-w-4xl mx-auto animate-in slide-in-from-bottom-6 duration-700 delay-100">
             
             {/* 1. Admin Role */}
             <button
@@ -453,62 +464,78 @@ export default function App() {
                 setActiveRole('Admin');
                 setActiveTab('dashboard');
               }}
-              className="bg-slate-850 hover:bg-slate-800 border border-slate-750 hover:border-amber-500 rounded-2xl p-6 text-center flex flex-col items-center justify-center gap-4 transition-all hover:scale-103 hover:shadow-xl group"
+              className="bg-slate-850 hover:bg-slate-800 border border-slate-750 hover:border-amber-500 rounded-2xl p-5 text-center flex flex-col items-center justify-center gap-3.5 transition-all hover:scale-103 hover:shadow-xl group"
             >
-              <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center transition group-hover:scale-105">
-                <ShieldCheck className="w-6 h-6" />
+              <div className="w-11 h-11 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center transition group-hover:scale-105">
+                <ShieldCheck className="w-5.5 h-5.5" />
               </div>
               <div>
-                <span className="text-sm font-black text-white block">Administrador</span>
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider block mt-1">Acceso Total</span>
+                <span className="text-xs font-black text-white block">Administrador</span>
+                <span className="text-[9px] text-slate-500 uppercase tracking-wider block mt-1">Acceso Total</span>
               </div>
             </button>
 
-            {/* 2. Diseño Role */}
+            {/* 2. Ventas Role */}
+            <button
+              onClick={() => {
+                setActiveRole('Ventas');
+              }}
+              className="bg-slate-850 hover:bg-slate-800 border border-slate-750 hover:border-emerald-500 rounded-2xl p-5 text-center flex flex-col items-center justify-center gap-3.5 transition-all hover:scale-103 hover:shadow-xl group"
+            >
+              <div className="w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center transition group-hover:scale-105">
+                <TrendingUp className="w-5.5 h-5.5" />
+              </div>
+              <div>
+                <span className="text-xs font-black text-white block">Ventas CRM</span>
+                <span className="text-[9px] text-slate-500 uppercase tracking-wider block mt-1">Cotizaciones & Tratos</span>
+              </div>
+            </button>
+
+            {/* 3. Diseño Role */}
             <button
               onClick={() => {
                 setActiveRole('Diseño');
               }}
-              className="bg-slate-850 hover:bg-slate-800 border border-slate-750 hover:border-blue-500 rounded-2xl p-6 text-center flex flex-col items-center justify-center gap-4 transition-all hover:scale-103 hover:shadow-xl group"
+              className="bg-slate-850 hover:bg-slate-800 border border-slate-750 hover:border-blue-500 rounded-2xl p-5 text-center flex flex-col items-center justify-center gap-3.5 transition-all hover:scale-103 hover:shadow-xl group"
             >
-              <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center transition group-hover:scale-105">
-                <Paintbrush className="w-6 h-6" />
+              <div className="w-11 h-11 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center transition group-hover:scale-105">
+                <Paintbrush className="w-5.5 h-5.5" />
               </div>
               <div>
-                <span className="text-sm font-black text-white block">Diseño</span>
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider block mt-1">Creatividad & Renders</span>
+                <span className="text-xs font-black text-white block">Diseño</span>
+                <span className="text-[9px] text-slate-500 uppercase tracking-wider block mt-1">Creatividad & Renders</span>
               </div>
             </button>
 
-            {/* 3. Producción Role */}
+            {/* 4. Producción Role */}
             <button
               onClick={() => {
                 setActiveRole('Produccion');
               }}
-              className="bg-slate-850 hover:bg-slate-800 border border-slate-750 hover:border-purple-500 rounded-2xl p-6 text-center flex flex-col items-center justify-center gap-4 transition-all hover:scale-103 hover:shadow-xl group"
+              className="bg-slate-850 hover:bg-slate-800 border border-slate-750 hover:border-purple-500 rounded-2xl p-5 text-center flex flex-col items-center justify-center gap-3.5 transition-all hover:scale-103 hover:shadow-xl group"
             >
-              <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center transition group-hover:scale-105">
-                <Hammer className="w-6 h-6" />
+              <div className="w-11 h-11 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center transition group-hover:scale-105">
+                <Hammer className="w-5.5 h-5.5" />
               </div>
               <div>
-                <span className="text-sm font-black text-white block">Producción</span>
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider block mt-1">Talleres & Obras</span>
+                <span className="text-xs font-black text-white block">Producción</span>
+                <span className="text-[9px] text-slate-500 uppercase tracking-wider block mt-1">Talleres & Obras</span>
               </div>
             </button>
 
-            {/* 4. Almacén Role */}
+            {/* 5. Almacén Role */}
             <button
               onClick={() => {
                 setActiveRole('Almacen');
               }}
-              className="bg-slate-850 hover:bg-slate-800 border border-slate-750 hover:border-teal-500 rounded-2xl p-6 text-center flex flex-col items-center justify-center gap-4 transition-all hover:scale-103 hover:shadow-xl group"
+              className="bg-slate-850 hover:bg-slate-800 border border-slate-750 hover:border-teal-500 rounded-2xl p-5 text-center flex flex-col items-center justify-center gap-3.5 transition-all hover:scale-103 hover:shadow-xl group col-span-2 sm:col-span-1"
             >
-              <div className="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center transition group-hover:scale-105">
-                <Warehouse className="w-6 h-6" />
+              <div className="w-11 h-11 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center transition group-hover:scale-105">
+                <Warehouse className="w-5.5 h-5.5" />
               </div>
               <div>
-                <span className="text-sm font-black text-white block">Almacén</span>
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider block mt-1">Logística & Stock</span>
+                <span className="text-xs font-black text-white block">Almacén</span>
+                <span className="text-[9px] text-slate-500 uppercase tracking-wider block mt-1">Logística & Stock</span>
               </div>
             </button>
 
@@ -525,13 +552,527 @@ export default function App() {
     );
   }
 
-  // Under construction (en construcción) views for Diseño, Producción and Almacén roles
-  if (activeRole !== 'Admin' && activeRole !== 'home') {
-    const roleColors: any = {
-      Diseño: { border: 'border-blue-500/30', text: 'text-blue-400', bg: 'bg-blue-500/10' },
-      Produccion: { border: 'border-purple-500/30', text: 'text-purple-400', bg: 'bg-purple-500/10' },
-      Almacen: { border: 'border-teal-500/30', text: 'text-teal-400', bg: 'bg-teal-500/10' }
-    };
+  // RENDER WORKSPACE FOR SALES ROLE
+  if (activeRole === 'Ventas') {
+    return (
+      <div className="min-h-screen bg-slate-100 text-slate-900 font-sans flex flex-col select-none">
+        
+        {/* Global Header Navigation for Ventas */}
+        <header className="bg-slate-950 text-white h-16 flex items-center justify-between px-4 md:px-8 shrink-0 shadow-lg z-30">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center font-black text-slate-900 italic transform hover:scale-105 transition-transform shrink-0">
+              I
+            </div>
+            <span className="text-sm md:text-xl font-black tracking-tight uppercase flex items-center whitespace-nowrap">
+              Ideas 
+              <span className="font-light text-slate-400 font-serif lowercase italic ml-2 hidden sm:inline">
+                - publicidad y arquitectura
+              </span>
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-2 md:space-x-4">
+            <div className="bg-emerald-500/10 text-emerald-400 rounded-full px-3 py-1 border border-emerald-500/20 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
+              Rol: Ventas CRM
+            </div>
+            <button
+              onClick={() => setActiveRole('home')}
+              className="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1"
+            >
+              <LogOut className="w-3.5 h-3.5 text-amber-400" />
+              <span>Cambiar Rol</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Main Content Workspace */}
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-slate-100">
+          <div className="w-full max-w-7xl mx-auto flex flex-col gap-6">
+            
+            {/* Page Header Area with Active Title */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-250 gap-2 shrink-0">
+              <div>
+                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-bold">Ideas Publicidad Arquitectura</span>
+                <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-0.5">Control de Prospección y Ventas (CRM)</h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold leading-none px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                  ✓ Acceso de Ventas Comercial
+                </span>
+                <span id="system-time" className="text-[10px] font-mono text-slate-400">
+                  {new Date().toISOString().split('T')[0]} Active
+                </span>
+              </div>
+            </div>
+
+            {/* Ventas Workspace component */}
+            <div className="w-full">
+              <VentasWorkspace
+                services={services}
+                quotations={quotations}
+                onCreateQuotation={handleCreateQuotation}
+                onUpdateQuotationStatus={handleUpdateQuotationStatus}
+              />
+            </div>
+
+          </div>
+        </main>
+
+        {/* Desktop Footer status info bar */}
+        <footer className="bg-slate-950 border-t border-slate-850 py-3 px-6 hidden lg:flex justify-between items-center text-[11px] text-slate-400 select-none shrink-0">
+          <div>
+            <span>Ideas Publicidad y Arquitectura | Módulo de Prospección de Clientes</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span>Sincronización CRM: <strong className="text-emerald-400 font-bold animate-pulse">● LocalStorage Sync OK</strong></span>
+            <span className="text-[10px] bg-slate-900 text-slate-400 font-mono px-2 py-0.5 rounded">v1.0 Ventas</span>
+          </div>
+        </footer>
+
+      </div>
+    );
+  }
+
+  // RENDER WORKSPACE FOR DESIGN ROLE
+  if (activeRole === 'Diseño') {
+    return (
+      <div className="min-h-screen bg-slate-100 text-slate-900 font-sans flex flex-col select-none">
+        
+        {/* Global Header Navigation for Diseño */}
+        <header className="bg-slate-950 text-white h-16 flex items-center justify-between px-4 md:px-8 shrink-0 shadow-lg z-30">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center font-black text-slate-900 italic transform hover:scale-105 transition-transform shrink-0">
+              I
+            </div>
+            <span className="text-sm md:text-xl font-black tracking-tight uppercase flex items-center whitespace-nowrap">
+              Ideas 
+              <span className="font-light text-slate-400 font-serif lowercase italic ml-2 hidden sm:inline">
+                - publicidad y arquitectura
+              </span>
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-2 md:space-x-4">
+            <div className="bg-blue-500/10 text-blue-400 rounded-full px-3 py-1 border border-blue-500/20 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-ping" />
+              Rol: Diseño Gráfico
+            </div>
+            <button
+              onClick={() => setActiveRole('home')}
+              className="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1"
+            >
+              <LogOut className="w-3.5 h-3.5 text-amber-400" />
+              <span>Cambiar Rol</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Main Content Workspace */}
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-slate-100">
+          <div className="w-full max-w-7xl mx-auto flex flex-col gap-6">
+            
+            {/* Page Header Area with Active Title */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-250 gap-2 shrink-0">
+              <div>
+                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-bold">Ideas Publicidad Arquitectura</span>
+                <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-0.5">Gestión de Proyectos - Fase Diseño</h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold leading-none px-3 py-1.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                  ✓ Acceso Diseñador Creativo
+                </span>
+                <span id="system-time" className="text-[10px] font-mono text-slate-400">
+                  {new Date().toISOString().split('T')[0]} Active
+                </span>
+              </div>
+            </div>
+
+            {/* Diseño Workspace component */}
+            <div className="w-full">
+              <DisenoWorkspace
+                services={services}
+                quotations={quotations}
+              />
+            </div>
+
+          </div>
+        </main>
+
+        {/* Desktop Footer status info bar */}
+        <footer className="bg-slate-950 border-t border-slate-850 py-3 px-6 hidden lg:flex justify-between items-center text-[11px] text-slate-400 select-none shrink-0">
+          <div>
+            <span>Ideas Publicidad y Arquitectura | Módulo de Preparación Gráfica y Archivos</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span>Sincronización Diseño: <strong className="text-emerald-400 font-bold animate-pulse">● LocalStorage Sync OK</strong></span>
+            <span className="text-[10px] bg-slate-900 text-slate-400 font-mono px-2 py-0.5 rounded">v1.0 Diseño</span>
+          </div>
+        </footer>
+
+      </div>
+    );
+  }
+
+  // RENDER WORKSPACE FOR PRODUCTION ROLE
+  if (activeRole === 'Produccion') {
+    return (
+      <div className="min-h-screen bg-slate-100 text-slate-900 font-sans flex flex-col select-none">
+        
+        {/* Global Header Navigation for Producción */}
+        <header className="bg-slate-950 text-white h-16 flex items-center justify-between px-4 md:px-8 shrink-0 shadow-lg z-30">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center font-black text-slate-900 italic transform hover:scale-105 transition-transform shrink-0">
+              I
+            </div>
+            <span className="text-sm md:text-xl font-black tracking-tight uppercase flex items-center whitespace-nowrap">
+              Ideas 
+              <span className="font-light text-slate-400 font-serif lowercase italic ml-2 hidden sm:inline">
+                - publicidad y arquitectura
+              </span>
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-2 md:space-x-4">
+            <div className="bg-purple-500/10 text-purple-400 rounded-full px-3 py-1 border border-purple-500/20 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-ping" />
+              Rol: Producción
+            </div>
+            <button
+              onClick={() => setActiveRole('home')}
+              className="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1"
+            >
+              <LogOut className="w-3.5 h-3.5 text-amber-400" />
+              <span>Cambiar Rol</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Main Content Workspace with sidebar on the right on desktop */}
+        <main className="flex-1 flex overflow-hidden">
+          
+          {/* Main content area */}
+          <div className="flex-1 flex flex-col overflow-y-auto p-4 md:p-6 bg-slate-100">
+            <div className="w-full max-w-7xl mx-auto flex-1 flex flex-col gap-6">
+              
+              {/* Page Header Area with Active Title */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-250 gap-2 shrink-0">
+                <div>
+                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-bold">Ideas Publicidad Arquitectura</span>
+                  <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
+                    {productionTab === 'flujo' ? 'Flujo de Producción y Manufactura' : productionTab === 'agenda' ? 'Agenda de Operaciones en Campo' : 'Herramientas de Taller y Códigos QR'}
+                  </h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold leading-none px-3 py-1.5 rounded-full bg-purple-100 text-purple-800 border border-purple-200">
+                    ✓ Acceso Taller Mecánico / Impresión
+                  </span>
+                  <span id="system-time" className="text-[10px] font-mono text-slate-400">
+                    {new Date().toISOString().split('T')[0]} Active
+                  </span>
+                </div>
+              </div>
+
+              {/* Producción Workspace component */}
+              <div className="w-full">
+                <ProduccionWorkspace
+                  services={services}
+                  quotations={quotations}
+                  deliveries={deliveries}
+                  onToggleDeliveryStatus={handleToggleDeliveryStatus}
+                  activeTab={productionTab}
+                  setActiveTab={setProductionTab}
+                />
+              </div>
+
+            </div>
+          </div>
+
+          {/* Right Side Navigation (Desktop/Large Screen) */}
+          <aside className="w-64 bg-slate-950 text-slate-100 hidden lg:flex flex-col shrink-0 select-none border-l border-slate-800 justify-between">
+            <div className="flex-1 flex flex-col">
+              <div className="p-4 bg-slate-900/40 border-b border-slate-800 flex items-center gap-2">
+                <div className="w-6 h-6 bg-purple-500/10 rounded text-purple-400 flex items-center justify-center">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold block text-white">Menú de Producción</span>
+                  <span className="text-[9px] text-slate-400 font-mono font-bold">Taller de Herrería y Lonas</span>
+                </div>
+              </div>
+
+              <nav className="p-3 space-y-1">
+                {[
+                  { id: 'flujo', label: 'Flujo de Producción', icon: Layers },
+                  { id: 'agenda', label: 'Agenda de Operaciones', icon: Calendar },
+                  { id: 'taller', label: 'Herramientas y QR', icon: Wrench }
+                ].map((link) => {
+                  const IsActive = productionTab === link.id;
+                  const IconComponent = link.icon;
+
+                  return (
+                    <button
+                      key={link.id}
+                      onClick={() => setProductionTab(link.id as any)}
+                      className={`w-full p-2.5 rounded-lg flex items-center text-left text-xs font-semibold transition-all group ${
+                        IsActive
+                          ? 'bg-purple-600 text-white shadow-xs'
+                          : 'text-slate-400 hover:bg-slate-900 hover:text-white'
+                      }`}
+                    >
+                      <IconComponent className={`w-4 h-4 mr-3 shrink-0 ${IsActive ? 'text-white' : 'text-slate-400 group-hover:text-purple-400'}`} />
+                      <span>{link.label}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+
+            <div className="p-4 border-t border-slate-800 space-y-3">
+              <button
+                onClick={() => setActiveRole('home')}
+                className="w-full bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs py-2 px-3 rounded-lg border border-slate-800 transition flex items-center justify-center gap-1.5"
+              >
+                <LogOut className="w-4 h-4 text-amber-400" />
+                <span>Cambiar de Rol</span>
+              </button>
+            </div>
+          </aside>
+
+        </main>
+
+        {/* Sticky Bottom Tab Navigation (Mobile Only) */}
+        <nav className="sticky bottom-0 bg-slate-950 border-t border-slate-800 p-2 pb-5.5 shadow-lg flex lg:hidden justify-between items-center z-40 shrink-0 select-none">
+          {[
+            { id: 'flujo', label: 'Flujo', icon: Layers },
+            { id: 'agenda', label: 'Agenda', icon: Calendar },
+            { id: 'taller', label: 'Herramientas', icon: Wrench },
+            { id: 'home', label: 'Cambiar Rol', icon: LogOut }
+          ].map((link) => {
+            const IsActive = productionTab === link.id || (link.id === 'home' && activeRole === 'home');
+            const IconComponent = link.icon;
+
+            return (
+              <button
+                key={link.id}
+                onClick={() => {
+                  if (link.id === 'home') {
+                    setActiveRole('home');
+                  } else {
+                    setProductionTab(link.id as any);
+                  }
+                }}
+                className={`flex flex-col items-center flex-1 py-1 px-1 rounded-lg transition-all ${
+                  IsActive 
+                    ? 'text-purple-400 font-extrabold animate-pulse' 
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                <IconComponent className={`w-5 h-5 ${IsActive ? 'stroke-[2.5px] text-purple-400 scale-105' : 'stroke-[1.8px]'} transition-transform`} />
+                <span className="text-[9px] mt-1 font-bold tracking-tight truncate max-w-full">
+                  {link.label}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Desktop Footer status info bar */}
+        <footer className="bg-slate-950 border-t border-slate-850 py-3 px-6 hidden lg:flex justify-between items-center text-[11px] text-slate-400 select-none shrink-0 z-15">
+          <div>
+            <span>Ideas Publicidad y Arquitectura | Módulo de Producción y Logística</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span>Sincronización Taller: <strong className="text-emerald-400 font-bold animate-pulse">● LocalStorage Sync OK</strong></span>
+            <span className="text-[10px] bg-slate-900 text-slate-400 font-mono px-2 py-0.5 rounded">v1.0 Producción</span>
+          </div>
+        </footer>
+
+      </div>
+    );
+  }
+
+  // RENDER WORKSPACE FOR ALMACEN ROLE
+  if (activeRole === 'Almacen') {
+    return (
+      <div className="min-h-screen bg-slate-100 text-slate-900 font-sans flex flex-col select-none">
+        
+        {/* Global Header Navigation for Almacén */}
+        <header className="bg-slate-950 text-white h-16 flex items-center justify-between px-4 md:px-8 shrink-0 shadow-lg z-30">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center font-black text-slate-900 italic transform hover:scale-105 transition-transform shrink-0">
+              I
+            </div>
+            <span className="text-sm md:text-xl font-black tracking-tight uppercase flex items-center whitespace-nowrap">
+              Ideas 
+              <span className="font-light text-slate-400 font-serif lowercase italic ml-2 hidden sm:inline">
+                - publicidad y arquitectura
+              </span>
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-2 md:space-x-4">
+            <div className="bg-teal-500/10 text-teal-400 rounded-full px-3 py-1 border border-teal-500/20 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-ping" />
+              Rol: Almacén
+            </div>
+            <button
+              onClick={() => setActiveRole('home')}
+              className="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1"
+            >
+              <LogOut className="w-3.5 h-3.5 text-amber-400" />
+              <span>Cambiar Rol</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Main Content Workspace with sidebar on the right on desktop */}
+        <main className="flex-1 flex overflow-hidden">
+          
+          {/* Main content area */}
+          <div className="flex-1 flex flex-col overflow-y-auto p-4 md:p-6 bg-slate-100">
+            <div className="w-full max-w-7xl mx-auto flex-1 flex flex-col gap-6">
+              
+              {/* Page Header Area with Active Title */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-200 gap-2 shrink-0">
+                <div>
+                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-bold">Ideas Publicidad Arquitectura</span>
+                  <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
+                    {almacenTab === 'inventario' ? 'Control de Inventario de Existencias' : almacenTab === 'compras' ? 'Registro de Compras y Suministros' : almacenTab === 'agenda' ? 'Agenda de Recepción de Insumos' : 'Consola de Respaldo Cloud de Seguridad'}
+                  </h1>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold leading-none px-3 py-1.5 rounded-full bg-teal-100 text-teal-800 border border-teal-200">
+                    ✓ Control de Stock Asegurado
+                  </span>
+                  <span id="system-time" className="text-[10px] font-mono text-slate-400">
+                    {new Date().toISOString().split('T')[0]} Active
+                  </span>
+                </div>
+              </div>
+
+              {/* Almacén Workspace component */}
+              <div className="w-full">
+                <AlmacenWorkspace
+                  services={services}
+                  quotations={quotations}
+                  activeTab={almacenTab}
+                  setActiveTab={setAlmacenTab}
+                />
+              </div>
+
+            </div>
+          </div>
+
+          {/* Right Side Navigation (Desktop/Large Screen) */}
+          <aside className="w-64 bg-slate-950 text-slate-100 hidden lg:flex flex-col shrink-0 select-none border-l border-slate-800 justify-between">
+            <div className="flex-1 flex flex-col">
+              <div className="p-4 bg-slate-900/40 border-b border-slate-800 flex items-center gap-2">
+                <div className="w-6 h-6 bg-teal-500/10 rounded text-teal-400 flex items-center justify-center">
+                  <Warehouse className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold block text-white">Menú de Almacén</span>
+                  <span className="text-[9px] text-slate-400 font-mono font-bold">Insumos y Logística</span>
+                </div>
+              </div>
+
+              <nav className="p-3 space-y-1">
+                {[
+                  { id: 'inventario', label: 'Inventario de Existencias', icon: Package },
+                  { id: 'compras', label: 'Compras y Proveedores', icon: ShoppingCart },
+                  { id: 'agenda', label: 'Agenda de Almacén', icon: Calendar },
+                  { id: 'respaldo', label: 'Respaldo Cloud de Seguridad', icon: Database }
+                ].map((link) => {
+                  const IsActive = almacenTab === link.id;
+                  const IconComponent = link.icon;
+
+                  return (
+                    <button
+                      key={link.id}
+                      onClick={() => setAlmacenTab(link.id as any)}
+                      className={`w-full p-2.5 rounded-lg flex items-center text-left text-xs font-semibold transition-all group ${
+                        IsActive
+                          ? 'bg-teal-600 text-white shadow-xs'
+                          : 'text-slate-400 hover:bg-slate-900 hover:text-white'
+                      }`}
+                    >
+                      <IconComponent className={`w-4 h-4 mr-3 shrink-0 ${IsActive ? 'text-white' : 'text-slate-400 group-hover:text-teal-400'}`} />
+                      <span>{link.label}</span>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+
+            <div className="p-4 border-t border-slate-800 space-y-3">
+              <button
+                onClick={() => setActiveRole('home')}
+                className="w-full bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-xs py-2 px-3 rounded-lg border border-slate-800 transition flex items-center justify-center gap-1.5"
+              >
+                <LogOut className="w-4 h-4 text-amber-400" />
+                <span>Cambiar de Rol</span>
+              </button>
+            </div>
+          </aside>
+
+        </main>
+
+        {/* Sticky Bottom Tab Navigation (Mobile/Tablet Only) */}
+        <nav className="sticky bottom-0 bg-slate-950 border-t border-slate-800 p-2 pb-5.5 shadow-lg flex lg:hidden justify-between items-center z-40 shrink-0 select-none">
+          {[
+            { id: 'inventario', label: 'Inventario', icon: Package },
+            { id: 'compras', label: 'Compras', icon: ShoppingCart },
+            { id: 'agenda', label: 'Agenda', icon: Calendar },
+            { id: 'respaldo', label: 'Respaldo', icon: Database },
+            { id: 'home', label: 'Cambiar Rol', icon: LogOut }
+          ].map((link) => {
+            const IsActive = almacenTab === link.id || (link.id === 'home' && activeRole === 'home');
+            const IconComponent = link.icon;
+
+            return (
+              <button
+                key={link.id}
+                onClick={() => {
+                  if (link.id === 'home') {
+                    setActiveRole('home');
+                  } else {
+                    setAlmacenTab(link.id as any);
+                  }
+                }}
+                className={`flex flex-col items-center flex-1 py-1 px-1 rounded-lg transition-all ${
+                  IsActive 
+                    ? 'text-teal-400 font-extrabold animate-pulse' 
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                <IconComponent className={`w-5 h-5 ${IsActive ? 'stroke-[2.5px] text-teal-400 scale-105' : 'stroke-[1.8px]'} transition-transform`} />
+                <span className="text-[9px] mt-1 font-bold tracking-tight truncate max-w-full">
+                  {link.label}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Desktop Footer status info bar */}
+        <footer className="bg-slate-950 border-t border-slate-850 py-3 px-6 hidden lg:flex justify-between items-center text-[11px] text-slate-400 select-none shrink-0 z-15">
+          <div>
+            <span>Ideas Publicidad y Arquitectura | Módulo de Almacén y Control de Suministros</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span>Sincronización Cloud: <strong className="text-emerald-400 font-bold animate-pulse">● Nube en Tiempo Real OK</strong></span>
+            <span className="text-[10px] bg-slate-900 text-slate-400 font-mono px-2 py-0.5 rounded">v1.2 Almacén</span>
+          </div>
+        </footer>
+
+      </div>
+    );
+  }
+
+  // Under construction (en construcción) views for roles
+  if (activeRole !== 'Admin' && activeRole !== 'Ventas' && activeRole !== 'Diseño' && activeRole !== 'Produccion' && activeRole !== 'Almacen' && activeRole !== 'home') {
+    const roleColors: any = {};
     const c = roleColors[activeRole] || { border: 'border-slate-500/30', text: 'text-slate-400', bg: 'bg-slate-500/10' };
 
     return (
@@ -708,8 +1249,38 @@ export default function App() {
       {/* 2. Main Layout Shell */}
       <main className="flex-1 flex overflow-hidden">
         
-        {/* Left Side Navigation (Desktop/Large Screen) */}
-        <aside className="w-64 bg-slate-950 text-slate-100 hidden lg:flex flex-col shrink-0 select-none border-r border-slate-800">
+        {/* 3. Main Content Workspace */}
+        <div className="flex-1 flex flex-col overflow-y-auto p-4 md:p-6 bg-slate-100">
+          
+          <div className="w-full max-w-7xl mx-auto flex-1 flex flex-col gap-6">
+            
+            {/* Page Header Area with Active Title */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-250 gap-2 shrink-0">
+              <div>
+                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-bold">Ideas Publicidad Arquitectura</span>
+                <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-0.5">{getHeaderTitle()}</h1>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold leading-none px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                  ✨ Acceso Directivo Activo
+                </span>
+                <span id="system-time" className="text-[10px] font-mono text-slate-400">
+                  2026-06-30 07:46
+                </span>
+              </div>
+            </div>
+
+            {/* Main Workspace Router container */}
+            <div className="w-full">
+              {renderAdminComponent()}
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* Right Side Navigation (Desktop/Large Screen) */}
+        <aside className="w-64 bg-slate-950 text-slate-100 hidden lg:flex flex-col shrink-0 select-none border-l border-slate-800">
           <div className="p-4 bg-slate-900/40 border-b border-slate-800 flex items-center gap-2">
             <div className="w-6 h-6 bg-amber-500/10 rounded text-amber-400 flex items-center justify-center">
               <ShieldCheck className="w-4 h-4" />
@@ -746,36 +1317,6 @@ export default function App() {
             })}
           </nav>
         </aside>
-
-        {/* 3. Main Content Workspace */}
-        <div className="flex-1 flex flex-col overflow-y-auto p-4 md:p-6 bg-slate-100">
-          
-          <div className="w-full max-w-7xl mx-auto flex-1 flex flex-col gap-6">
-            
-            {/* Page Header Area with Active Title */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-250 gap-2 shrink-0">
-              <div>
-                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-bold">Ideas Publicidad Arquitectura</span>
-                <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight mt-0.5">{getHeaderTitle()}</h1>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold leading-none px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
-                  ✨ Acceso Directivo Activo
-                </span>
-                <span id="system-time" className="text-[10px] font-mono text-slate-400">
-                  2026-06-30 07:46
-                </span>
-              </div>
-            </div>
-
-            {/* Main Workspace Router container */}
-            <div className="w-full">
-              {renderAdminComponent()}
-            </div>
-
-          </div>
-
-        </div>
 
       </main>
 
